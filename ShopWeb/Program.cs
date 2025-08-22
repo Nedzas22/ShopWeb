@@ -1,18 +1,20 @@
+using Microsoft.Extensions.Options;
 using ShopWeb;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.Configure<FruitOptions>(options =>
+{
+    options.Name = "watermelon";
+    options.Color = "red";
+});
+
 var app = builder.Build();
 
-app.Use(async(context,next) =>
+app.MapGet("/fruit", async(HttpContext context, IOptions<FruitOptions> FruitOptions) => 
 {
-  if(context.Request.Path == "/short")
-    {
-        await context.Response.WriteAsync("Request short-circuited");
-    }
-    else
-    {
-        await next();
-    }
+    FruitOptions options = FruitOptions.Value;
+    await context.Response.WriteAsync($"Fruit Name: {options.Name}, Color: {options.Color}");
 });
 
 app.UseMiddleware<Middleware>();
