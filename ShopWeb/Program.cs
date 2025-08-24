@@ -1,23 +1,34 @@
 using Microsoft.Extensions.Options;
 using ShopWeb;
+using ShopWeb.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.Configure<FruitOptions>(options =>
-{
-    options.Name = "watermelon";
-    options.Color = "red";
-});
-
 var app = builder.Build();
 
-app.MapGet("/fruit", async(HttpContext context, IOptions<FruitOptions> FruitOptions) => 
+
+app.MapGet("/cookie", async context =>
 {
-    FruitOptions options = FruitOptions.Value;
-    await context.Response.WriteAsync($"Fruit Name: {options.Name}, Color: {options.Color}");
+    int counter = int.Parse(context.Request.Cookies["counter"] ?? "0") + 1;
+
+    context.Response.Cookies.Append(
+        "counter",
+        counter.ToString(),
+        new CookieOptions
+        {
+            MaxAge = TimeSpan.FromMinutes(30)
+        }
+     );
+
+    await context.Response.WriteAsync($"Cookie counter: {counter}");
 });
 
-app.UseMiddleware<Middleware>();
+app.MapGet("/clear", context =>
+{
+    context.Response.Cookies.Delete("counter");
+    context.Response.Redirect("/cookie");
+    return Task.CompletedTask;
+});
 
 app.MapGet("/", () => "Hello World!");
 

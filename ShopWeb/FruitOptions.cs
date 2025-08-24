@@ -2,7 +2,7 @@
 {
     public class FruitOptions
     {
-        public string Name { get; set; } = "apple";
-        public string Color { get; set; } = "green";
+        public string Name { get; set; } = "Apple";
+        public string Color { get; set; } = "Red";
     }
 }

@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.Options;
+﻿using Microsoft.Extensions.Logging.Configuration;
+using Microsoft.Extensions.Options;
+using ShopWeb.Services;
 
 namespace ShopWeb
 {
@@ -13,16 +15,20 @@ namespace ShopWeb
             _options = options.Value;
         }
 
-        public async Task Invoke(HttpContext context)
+        public async Task InvokeAsync(HttpContext context, ILogger<FruitMiddleware> logger)
         {
             if (context.Request.Path == "/fruit")
             {
-                await context.Response.WriteAsync($"Fruit Name: {_options.Name}, Color: {_options.Color}");
+               logger.LogDebug($"Started processing for {context.Request.Path}");
+               await context.Response.WriteAsync($"{_options.Name} is {_options.Color}\n");
+               logger.LogDebug($"End processing for {context.Request.Path}");
             }
             else
             {
                 await _next(context);
+                logger.LogDebug($"fruit not requestest processing for {context.Request.Path}");
             }
+            logger.LogDebug($"fruit was or was requestest processing for {context.Request.Path}");
         }
     }
 }
