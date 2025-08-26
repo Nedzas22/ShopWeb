@@ -1,34 +1,27 @@
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using ShopWeb;
+using ShopWeb.Infrastucture;
+using ShopWeb.Models;
 using ShopWeb.Services;
+using System.Text.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddDbContext<DataContext>(options =>
+{
+    options.UseSqlServer(builder.Configuration["ConnectionStrings:DbConnection"]);
+});
+
+builder.Services.AddControllers();
+
 var app = builder.Build();
 
+app.MapControllers();
 
-app.MapGet("/cookie", async context =>
-{
-    int counter = int.Parse(context.Request.Cookies["counter"] ?? "0") + 1;
 
-    context.Response.Cookies.Append(
-        "counter",
-        counter.ToString(),
-        new CookieOptions
-        {
-            MaxAge = TimeSpan.FromMinutes(30)
-        }
-     );
-
-    await context.Response.WriteAsync($"Cookie counter: {counter}");
-});
-
-app.MapGet("/clear", context =>
-{
-    context.Response.Cookies.Delete("counter");
-    context.Response.Redirect("/cookie");
-    return Task.CompletedTask;
-});
+var context = app.Services.CreateScope().ServiceProvider.GetRequiredService<DataContext>();
+SeedData.SeedDatabase(context);
 
 app.MapGet("/", () => "Hello World!");
 
