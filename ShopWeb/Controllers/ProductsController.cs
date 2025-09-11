@@ -1,31 +1,36 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using ShopWeb.Infrastucture;
 using ShopWeb.Models;
 using System.Linq;
+using System.Reflection.Metadata.Ecma335;
 
 namespace ShopWeb.Controllers
 {
+    [ApiController]
     [Route("api/[controller]")]
-    public class ProductsController : ControllerBase
+    public class CategoriesController : ControllerBase
     {
         private DataContext _context;
-        
-        public ProductsController(DataContext context)
+
+        public CategoriesController(DataContext context)
         {
             _context = context;
         }
-        //api/products
-        [HttpGet]
-       public IEnumerable<Product> GetProducts()
-        {
-           return _context.Products;
-        }
-        //api/products/1
+
+   
+        //api/categories/1
         [HttpGet("{id}")]
-        public Product GetProduct(long id,[FromServices]ILogger<ProductsController> logger)
+        public async Task<IActionResult> GetProduct(long id)
         {
-            logger.LogDebug("GetProduct Action Invoked");
-            return _context.Products.Find(id);
+            Product product = await _context.Products.FindAsync(id);
+            if (product == null)
+            {
+                return NotFound();
+            }
+            return Ok(product);
         }
+
+ 
     }
 }
