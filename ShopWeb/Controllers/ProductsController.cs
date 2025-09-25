@@ -37,6 +37,7 @@ namespace ShopWeb.Controllers
         }
 
         [HttpPost]
+        [Consumes("application/xml")]
         public async Task<IActionResult> SaveProduct([FromBody] Product product)
         {
 

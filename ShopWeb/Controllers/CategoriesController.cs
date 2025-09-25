@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.JsonPatch;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using ShopWeb.Infrastucture;
 using ShopWeb.Models;
@@ -16,18 +18,36 @@ namespace ShopWeb.Controllers
         {
             _context = context;
         }
-        //api/products
-        [HttpGet]
-        public IEnumerable<Product> GetProducts()
-        {
-            return _context.Products;
-        }
-        //api/products/1
-
 
         //api/categories/1
- 
+        [HttpGet("{id}")]
+        [Produces("application/json")]
+        public async Task<Category> GetCategory(long id)
+            {
+                Category category = await _context.Categories.Include(c => c.Products).FirstAsync(c => c.id == id);
+                if(category.Products != null)
+                {
+                    foreach(Product product in category.Products)
+                    {
+                        product.Category = null;
+                    }
+                }
 
+                return category;
+            }
 
+        //api/categories/1
+        [HttpPatch("{id}")]
+        public async Task<Category> PatchCategory(long id, JsonPatchDocument<Category> pathDoc)
+        {
+            Category category = await _context.Categories.FindAsync(id); 
+            if (category != null)
+            {
+                pathDoc.ApplyTo(category);
+                await _context.SaveChangesAsync();
+            }
+
+            return category;
+        }
     }
-}
+    }
