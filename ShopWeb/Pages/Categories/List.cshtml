@@ -1,0 +1,31 @@
+﻿@page "/list/categories"
+@using Microsoft.AspNetCore.Mvc.RazorPages
+@using ShopWeb.Infrastucture
+@using ShopWeb.Models
+@model ListModel
+
+<h5>Categories</h5>
+
+<ul class="list-group m-2">
+    @foreach (var category in Model.Categories)
+    {
+        <li class="list-group-item">@category</li>
+    }
+</ul>
+
+@functions {
+    public class ListModel : PageModel
+    {
+        private DataContext _context;
+        public IEnumerable<string> Categories { get; set; }
+        public ListModel(DataContext context)
+        {
+            _context = context;
+        }
+
+        public void OnGet()
+        {
+            Categories = _context.Categories.Select(c => c.name);
+        }
+    }
+}

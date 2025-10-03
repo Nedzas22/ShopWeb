@@ -1,0 +1,27 @@
+﻿@page
+@model ShopWeb.Pages.HandlerSelectorModel
+
+
+<div class="bg-primary text-white text-center p-2 m-2">
+    Handler Selector
+</div>
+
+<table class="table table-striped table-bordered">
+    <tbody>
+        <tr>
+            <th>Name</th>
+            <td>@Model.Product.name</td>
+        </tr>
+        <tr>
+            <th>Price</th>
+            <td>@Model.Product.price</td>
+        </tr>
+        <tr>
+            <th>Category</th>
+            <td>@Model.Product.Category?.name</td>
+        </tr>
+    </tbody>
+</table>
+
+<a href="/handlerselector" class="btn btn-primary">Standart</a>
+<a href="/handlerselector?handler=category" class="btn btn-primary">Category</a>

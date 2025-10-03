@@ -17,16 +17,17 @@ builder.Services.AddDbContext<DataContext>(options =>
 
 builder.Services.AddControllersWithViews();
 
-
+builder.Services.AddRazorPages();
 
 var app = builder.Build();
 
 app.MapControllers();
 
-//app.MapControllerRoute("Default", "{controller=Home}/{action=Index}/{id?}");\
-
 app.MapDefaultControllerRoute();
 
+app.MapRazorPages();
+
+app.UseStaticFiles();
 
 var context = app.Services.CreateScope().ServiceProvider.GetRequiredService<DataContext>();
 SeedData.SeedDatabase(context);

@@ -1,0 +1,18 @@
+﻿@model Product
+
+<tr>
+    @*@<td>@Model.name</td>*@
+    <partial name="_CellPartial" for="name" />
+    <td>@Model.price.ToString("c")</td>
+
+    <td>
+        @if(ViewData["fruit"] == "apples")
+        {
+            @:apples
+        }
+        else
+        {
+            @:not apples
+        }
+    </td>
+</tr>
